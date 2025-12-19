@@ -1,0 +1,65 @@
+<%- include('../partials/admin-header') %>
+
+<div class="admin-content">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number"><%= stats.totalProducts %></div>
+            <div>Total Products</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number text-warning"><%= stats.lowStock %></div>
+            <div>Low Stock</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number text-danger"><%= stats.outOfStock %></div>
+            <div>Out of Stock</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-flower-tulip"></i> Recent Products
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-admin">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% recentProducts.forEach(product => { %>
+                                <tr>
+                                    <td>
+                                        <% if (product.image) { %>
+                                            <img src="/images/<%= product.image %>" alt="<%= product.name %>" 
+                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        <% } else { %>
+                                            <span class="text-muted">No Image</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= product.name %></td>
+                                    <td>Rs.<%= product.price.toLocaleString() %></td>
+                                    <td>
+                                        <span class="badge <%= product.stock > 0 ? 'bg-success' : 'bg-danger' %>"><%= product.stock %></span>
+                                    </td>
+                                    <td><%= product.rating %> <i class="fas fa-star text-warning"></i></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
