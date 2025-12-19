@@ -1,0 +1,46 @@
+<header class="topbar">
+  <nav class="sidebar">
+    <a href="/">Home</a>
+    <a href="/#about">About</a>
+    <a href="/crud">Crud</a>
+  </nav>
+
+  <div class="heading">
+    <h1>
+      <a href="/">fl<i class="fa-solid fa-fan"></i>wer<sup>be</sup></a>
+    </h1>
+  </div>
+
+  <nav class="sidebar">
+    <a href="/products">Products</a>
+    <a href="/cart" class="cart-link">
+      <i class="fa-solid fa-cart-shopping"></i> Cart
+      <span class="cart-badge" style="
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        vertical-align: top;
+        margin-left: 4px;
+      ">0</span>
+    </a>
+    <a href="/products">Buy Now</a>
+  </nav>
+</header>
+
+<script>
+  // Update cart badge based on localStorage
+  function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+      const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+      badge.textContent = totalQty;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateCartBadge();
+  });
+</script>

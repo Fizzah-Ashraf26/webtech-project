@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      background-color: #f2eee7;
+    }
+    .product-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s;
+      height: 100%;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .product-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 15px;
+    }
+    .price {
+      color: #615450;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .rating {
+      color: #f39c12;
+    }
+    .filter-section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    .pagination-custom {
+      margin-top: 30px;
+    }
+    .btn-filter {
+      background: white;
+      border: 2px solid #615450;
+      color: #615450;
+      padding: 10px 20px;
+      font-size: 16px;
+      position: relative;
+    }
+    .btn-filter:hover {
+      background: #615450;
+      color: white;
+    }
+    .dropdown-toggle::after {
+      margin-left: 10px;
+    }
+    .dropdown-menu {
+      border: 2px solid #615450;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .dropdown-item {
+      color: #615450;
+      padding: 10px 20px;
+    }
+    .dropdown-item:hover {
+      background-color: #f2eee7;
+      color: #615450;
+    }
+    .dropdown-item.active {
+      background-color: #615450;
+      color: white;
+    }
+    .badge-stock {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #28a745;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container py-5">
+    <h1 class="text-center mb-4" style="color: #615450;">Our Products</h1>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <form action="/products" method="GET" id="filterForm">
+        <div class="row g-3 align-items-center">
+          <!-- Search -->
+          <div class="col-md-5">
+            <input type="text" class="form-control" name="search" placeholder="Search products..." value="<%= filters.search %>">
+          </div>
+
+          <!-- Category Filter -->
+          <div class="col-md-4">
+            <select class="form-select" name="category" onchange="this.form.submit()">
+              <option value="">All Categories</option>
+              <option value="Bouquets" <%= filters.category === 'Bouquets' ? 'selected' : '' %>>Bouquets</option>
+              <option value="Roses" <%= filters.category === 'Roses' ? 'selected' : '' %>>Roses</option>
+              <option value="Lillies" <%= filters.category === 'Lillies' ? 'selected' : '' %>>Lillies</option>
+              <option value="Orchids" <%= filters.category === 'Orchids' ? 'selected' : '' %>>Orchids</option>
+              <option value="Mixed" <%= filters.category === 'Mixed' ? 'selected' : '' %>>Mixed</option>
+              <option value="Daisies" <%= filters.category === 'Daisies' ? 'selected' : '' %>>Daisies</option>
+              <option value="Sunflowers" <%= filters.category === 'Sunflowers' ? 'selected' : '' %>>Sunflowers</option>
+
+            </select>
+          </div>
+
+          <!-- Filter Dropdown Button -->
+          <div class="col-md-3">
+            <div class="dropdown w-100">
+              <button class="btn btn-filter dropdown-toggle w-100" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-filter"></i> Filter
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+                <li><h6 class="dropdown-header">Sort By</h6></li>
+                <li>
+                  <a class="dropdown-item <%= filters.sort === 'name' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=name&limit=<%= limit %>">
+                    <i class="fas fa-font"></i> Name (A-Z)
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item <%= filters.sort === 'price-asc' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=price-asc&limit=<%= limit %>">
+                    <i class="fas fa-arrow-up"></i> Price: Low to High
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item <%= filters.sort === 'price-desc' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=price-desc&limit=<%= limit %>">
+                    <i class="fas fa-arrow-down"></i> Price: High to Low
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item <%= filters.sort === 'newest' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=newest&limit=<%= limit %>">
+                    <i class="fas fa-clock"></i> Newest First
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Stock Status</h6></li>
+                <li>
+                  <a class="dropdown-item <%= filters.inStock === 'true' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=<%= filters.sort %>&inStock=true&limit=<%= limit %>">
+                    <i class="fas fa-check-circle"></i> In Stock Only
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item <%= !filters.inStock || filters.inStock === 'false' ? 'active' : '' %>" href="?category=<%= filters.category %>&search=<%= filters.search %>&sort=<%= filters.sort %>&inStock=false&limit=<%= limit %>">
+                    <i class="fas fa-list"></i> All Products
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="limit" value="<%= limit %>">
+      </form>
+
+      <div class="mt-3">
+        <small class="text-muted">Showing <%= products.length %> of <%= totalProducts %> products</small>
+        <% if (filters.category) { %>
+          <span class="badge bg-secondary ms-2"><%= filters.category %></span>
+        <% } %>
+        <% if (filters.inStock === 'true') { %>
+          <span class="badge bg-success ms-2">In Stock Only</span>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row g-4">
+      <% if (products.length === 0) { %>
+        <div class="col-12 text-center py-5">
+          <h3>No products found</h3>
+          <p>Try adjusting your filters</p>
+        </div>
+      <% } else { %>
+        <% products.forEach(product => { %>
+          <div class="col-md-4 col-lg-3">
+            <div class="product-card">
+              <div style="position: relative;">
+                <% if (product.stock > 0) { %>
+                  <span class="badge-stock">In Stock</span>
+                <% } else { %>
+                  <span class="badge-stock" style="background: #dc3545;">Out of Stock</span>
+                <% } %>
+                <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="product-image">
+              </div>
+              <div class="product-info">
+                <h5><%= product.name %></h5>
+                <p class="text-muted small"><%= product.category %></p>
+                <div class="rating mb-2">
+                  <% for(let i = 0; i < Math.floor(product.rating); i++) { %>
+                    <i class="fas fa-star"></i>
+                  <% } %>
+                  <% if (product.rating % 1 !== 0) { %>
+                    <i class="fas fa-star-half-alt"></i>
+                  <% } %>
+                  <span class="text-muted small">(<%= product.rating %>)</span>
+                </div>
+                <p class="small text-muted" style="height: 60px; overflow: hidden;">
+                  <%= product.description ? product.description.substring(0, 80) : '' %>...
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="price">Rs.<%= product.price %></span>
+                  <a href="/products/<%= product._id %>" class="btn btn-sm btn-filter">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <nav class="pagination-custom">
+        <ul class="pagination justify-content-center">
+          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=<%= currentPage - 1 %>&category=<%= filters.category %>&search=<%= filters.search %>&sort=<%= filters.sort %>&inStock=<%= filters.inStock %>&limit=<%= limit %>">
+              Previous
+            </a>
+          </li>
+          <% for(let i = 1; i <= totalPages; i++) { %>
+            <% if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) { %>
+              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>&category=<%= filters.category %>&search=<%= filters.search %>&sort=<%= filters.sort %>&inStock=<%= filters.inStock %>&limit=<%= limit %>">
+                  <%= i %>
+                </a>
+              </li>
+            <% } else if (i === currentPage - 3 || i === currentPage + 3) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+            <% } %>
+          <% } %>
+          <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=<%= currentPage + 1 %>&category=<%= filters.category %>&search=<%= filters.search %>&sort=<%= filters.sort %>&inStock=<%= filters.inStock %>&limit=<%= limit %>">
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
+    <% } %>
+  </div>
+
+  <footer id="footer">
+    <%- include('partials/footer') %>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

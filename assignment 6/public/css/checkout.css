@@ -1,0 +1,90 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f2eee7;
+  margin: 0;
+  padding: 0;
+  color: #2a2422;
+}
+
+.header {
+  background-color: #f2eee7;
+}
+.header h1 a {
+  font-size: 36px;
+  font-weight: normal;
+  color: #615450;
+  text-decoration: none;
+}
+
+.checkout-steps {
+  font-weight: 500;
+  color: #615450;
+}
+.step {
+  color: #9d8b84;
+}
+.step.active {
+  color: #2a2422;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.step.completed {
+  color: #615450;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #d9d2cd;
+  border-radius: 6px;
+  padding: 10px;
+  background-color:#f2eee7; 
+  transition:  box-shadow 0.3s ease;
+}
+
+
+.form-check-label {
+  color: #4b2e2e;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: none;
+  border: 2px solid #615450;
+  color: #615450;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+
+.btn-primary:hover {
+  background-color: rgb(51, 35, 35);
+  border-color: rgb(51, 35, 35);
+  color: #fff;
+}
+
+
+.border {
+  border: 1px solid #d9d2cd ;
+  border-radius: 8px;
+  background-color: #faf8f6;
+}
+
+footer {
+  background-color: #f2eee7;
+  color: #2a2422;
+  font-size: 14px;
+  padding: 15px;
+  border-top: 1px solid #d9d2cd;
+}
+.container.mt-3 {
+  background-color: white; 
+  border-radius: 10px;
+  padding: 20px;
+}
+
+@media (max-width: 576px) {
+  .position-sticky {
+    position: static !important;
+  }
+}

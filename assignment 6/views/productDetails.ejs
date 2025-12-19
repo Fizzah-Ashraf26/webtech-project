@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      background-color: #f2eee7;
+    }
+    .product-detail-container {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      margin-top: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .product-image-main {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .product-price {
+      color: #615450;
+      font-size: 36px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .rating {
+      color: #f39c12;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    .btn-add-cart {
+      background: #615450;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+    .btn-add-cart:hover {
+      background: #7a6b66;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-add-cart:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .quantity-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #615450;
+      background: white;
+      color: #615450;
+      border-radius: 5px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .quantity-btn:hover {
+      background: #615450;
+      color: white;
+    }
+    .quantity-input {
+      width: 80px;
+      text-align: center;
+      border: 2px solid #615450;
+      border-radius: 5px;
+      padding: 8px;
+      font-size: 18px;
+    }
+    .stock-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .stock-badge.in-stock {
+      background: #28a745;
+      color: white;
+    }
+    .stock-badge.out-of-stock {
+      background: #dc3545;
+      color: white;
+    }
+    .product-category {
+      display: inline-block;
+      background: #f2eee7;
+      color: #615450;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .alert-success {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 1000;
+      min-width: 300px;
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <div class="product-detail-container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/" style="color: #615450;">Home</a></li>
+          <li class="breadcrumb-item"><a href="/products" style="color: #615450;">Products</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+        </ol>
+      </nav>
+
+      <div class="row g-4">
+        <!-- Product Image -->
+        <div class="col-md-6">
+          <img src="<%= product.image %>" alt="<%= product.name %>" class="product-image-main">
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+          <span class="product-category"><%= product.category %></span>
+          <h1 class="mb-3" style="color: #615450;"><%= product.name %></h1>
+          
+          <div class="rating mb-3">
+            <% for(let i = 0; i < Math.floor(product.rating); i++) { %>
+              <i class="fas fa-star"></i>
+            <% } %>
+            <% if (product.rating % 1 !== 0) { %>
+              <i class="fas fa-star-half-alt"></i>
+            <% } %>
+            <span class="ms-2" style="color: #666;">(<%= product.rating %> / 5)</span>
+          </div>
+
+          <div class="product-price">Rs.<%= product.price %></div>
+
+          <% if (product.stock > 0) { %>
+            <span class="stock-badge in-stock">
+              <i class="fas fa-check-circle"></i> In Stock (<%= product.stock %> available)
+            </span>
+          <% } else { %>
+            <span class="stock-badge out-of-stock">
+              <i class="fas fa-times-circle"></i> Out of Stock
+            </span>
+          <% } %>
+
+          <p class="mt-3" style="font-size: 16px; line-height: 1.8; color: #666;">
+            <%= product.description %>
+          </p>
+
+          <% if (product.stock > 0) { %>
+            <div class="quantity-selector">
+              <label style="font-weight: 600; color: #615450;">Quantity:</label>
+              <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+              <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="<%= product.stock %>" readonly>
+              <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+            </div>
+
+            <button class="btn btn-add-cart w-100 mb-3" onclick="addToCart()">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+
+            <a href="/cart" class="btn btn-outline-secondary w-100" style="border-color: #615450; color: #615450;">
+              <i class="fas fa-shopping-bag"></i> View Cart
+            </a>
+          <% } else { %>
+            <button class="btn btn-add-cart w-100" disabled>
+              <i class="fas fa-ban"></i> Out of Stock
+            </button>
+          <% } %>
+
+          <div class="mt-4 p-3" style="background: #f2eee7; border-radius: 8px;">
+            <h6 style="color: #615450;"><i class="fas fa-truck"></i> Delivery Information</h6>
+            <p class="mb-1" style="font-size: 14px;">Free delivery on orders over Rs.5000</p>
+            <p class="mb-0" style="font-size: 14px;">Estimated delivery: 2-3 business days</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer" class="mt-5">
+    <%- include('partials/footer') %>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const productData = {
+      id: '<%= product._id %>',
+      name: '<%= product.name %>',
+      price: <%= product.price %>,
+      image: '<%= product.image %>',
+      category: '<%= product.category %>',
+      stock: <%= product.stock %>
+    };
+
+    function increaseQuantity() {
+      const input = document.getElementById('quantity');
+      const max = parseInt(input.max);
+      const current = parseInt(input.value);
+      if (current < max) {
+        input.value = current + 1;
+      }
+    }
+
+    function decreaseQuantity() {
+      const input = document.getElementById('quantity');
+      const current = parseInt(input.value);
+      if (current > 1) {
+        input.value = current - 1;
+      }
+    }
+
+    function addToCart() {
+      const quantity = parseInt(document.getElementById('quantity').value);
+      
+      // Get existing cart from localStorage
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      // Check if product already exists in cart
+      const existingIndex = cart.findIndex(item => item.id === productData.id);
+      
+      if (existingIndex > -1) {
+        // Update quantity if product exists
+        const newQuantity = cart[existingIndex].quantity + quantity;
+        if (newQuantity <= productData.stock) {
+          cart[existingIndex].quantity = newQuantity;
+        } else {
+          showAlert('Cannot add more than available stock!', 'warning');
+          return;
+        }
+      } else {
+        // Add new product to cart
+        cart.push({
+          ...productData,
+          quantity: quantity
+        });
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Update cart count in header if exists
+      updateCartCount();
+      
+      // Show success message
+      showAlert(`${productData.name} added to cart!`, 'success');
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cartBadge = document.querySelector('.cart-badge');
+      if (cartBadge) {
+        cartBadge.textContent = totalItems;
+      }
+    }
+
+    function showAlert(message, type) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(alertDiv);
+      
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+
+    // Initialize cart count on page load
+    updateCartCount();
+  </script>
+</body>
+</html>
