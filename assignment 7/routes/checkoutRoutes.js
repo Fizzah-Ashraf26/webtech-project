@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-// Checkout page route
 router.get('/', (req, res) => {
   res.render('checkout', {
     pageTitle: 'Checkout - Flower',
@@ -9,7 +8,6 @@ router.get('/', (req, res) => {
   });
 });
 
-// Handle checkout form submission
 router.post('/', (req, res) => {
   const orderData = {
     fullName: req.body.fullName,
@@ -22,10 +20,8 @@ router.post('/', (req, res) => {
     paymentMethod: req.body.payment
   };
 
-  // In a real application, you would save this to a database
   console.log('Order received:', orderData);
   
-  // Redirect to order success page
   res.redirect('/orderplaced');
 });
 

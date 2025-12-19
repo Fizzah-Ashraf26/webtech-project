@@ -141,12 +141,10 @@
       </nav>
 
       <div class="row g-4">
-        <!-- Product Image -->
         <div class="col-md-6">
           <img src="<%= product.image %>" alt="<%= product.name %>" class="product-image-main">
         </div>
 
-        <!-- Product Details -->
         <div class="col-md-6">
           <span class="product-category"><%= product.category %></span>
           <h1 class="mb-3" style="color: #615450;"><%= product.name %></h1>
@@ -217,10 +215,10 @@
     const productData = {
       id: '<%= product._id %>',
       name: '<%= product.name %>',
-      price: <%= product.price %>,
+      price: '<%= product.price %>',
       image: '<%= product.image %>',
       category: '<%= product.category %>',
-      stock: <%= product.stock %>
+      stock: '<%= product.stock %>'
     };
 
     function increaseQuantity() {
@@ -243,14 +241,11 @@
     function addToCart() {
       const quantity = parseInt(document.getElementById('quantity').value);
       
-      // Get existing cart from localStorage
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
       
-      // Check if product already exists in cart
       const existingIndex = cart.findIndex(item => item.id === productData.id);
       
       if (existingIndex > -1) {
-        // Update quantity if product exists
         const newQuantity = cart[existingIndex].quantity + quantity;
         if (newQuantity <= productData.stock) {
           cart[existingIndex].quantity = newQuantity;
@@ -259,20 +254,16 @@
           return;
         }
       } else {
-        // Add new product to cart
         cart.push({
           ...productData,
           quantity: quantity
         });
       }
       
-      // Save to localStorage
       localStorage.setItem('cart', JSON.stringify(cart));
       
-      // Update cart count in header if exists
       updateCartCount();
       
-      // Show success message
       showAlert(`${productData.name} added to cart!`, 'success');
     }
 
@@ -299,7 +290,6 @@
       }, 3000);
     }
 
-    // Initialize cart count on page load
     updateCartCount();
   </script>
 </body>

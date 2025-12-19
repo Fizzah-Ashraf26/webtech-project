@@ -1,22 +1,19 @@
-// Load environment variables from .env
 require('dotenv').config();
 
 const mongoose = require("mongoose");
 const Product = require("../models/products");
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Array of sample products to seed
 const products = [
     {
         name: "Primroses Bouquet",
         price: 2500,
         stock: 50,
         category: "Bouquets",
-        image: "/images/primroses.jpg", // Fixed: proper path string
+        image: "/images/primroses.jpg", 
         description: 'Beautiful colorful primroses arranged in a stunning bouquet perfect for any occasion.',
         rating: 4.5
     },
@@ -25,7 +22,7 @@ const products = [
         price: 2000,
         stock: 25,
         category: "Mixed",
-        image: "/images/summermix.jpg", // Fixed: added extension
+        image: "/images/summermix.jpg", 
         description: 'Vibrant summer flowers mixed together to create a cheerful and bright arrangement.',
         rating: 4.8
     },
@@ -34,7 +31,7 @@ const products = [
         price: 3000,
         stock: 10,
         category: "Roses",
-        image: "/images/pinkflower.jpg", // Fixed: added extension
+        image: "/images/pinkflower.jpg", 
         description: 'Delicate pink spring flowers that bring freshness and elegance to any room.',
         rating: 5
     },
@@ -155,20 +152,13 @@ const products = [
         description: 'A light yellow floral arrangement that brings warmth, joy, and gentle elegance.',
         rating: 4.8
     }
-
-    
-
-
 ];
 
-// Seed function
 const seedDB = async () => {
   try {
-    // Clear existing products
     await Product.deleteMany();
     console.log('Existing products cleared');
 
-    // Insert new sample products
     await Product.insertMany(products);
     console.log('Sample products inserted successfully');
 
@@ -179,5 +169,4 @@ const seedDB = async () => {
   }
 };
 
-// Run the seed function
 seedDB();

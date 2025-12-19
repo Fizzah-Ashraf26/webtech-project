@@ -10,21 +10,17 @@ const Product = require('./models/products');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
 connectDB();
 
-// Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('public'));
 
 
-const indexRoutes = require('./routes/indexRoutes');       // or './routes/index route.js'
+const indexRoutes = require('./routes/indexRoutes');       
 const checkoutRoutes = require('./routes/checkoutRoutes');
 const crudRoutes = require('./routes/crudRoutes');
 const productRoutes = require('./routes/productRoutes');

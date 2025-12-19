@@ -5,11 +5,9 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Multer storage configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const dir = path.join(__dirname, '../public/images');
-        // Make sure folder exists
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
@@ -21,7 +19,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Dashboard
 router.get('/', async (req, res) => {
     try {
         const totalProducts = await Product.countDocuments();
@@ -41,7 +38,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Products list
 router.get('/products', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
@@ -57,7 +53,6 @@ router.get('/products', async (req, res) => {
     }
 });
 
-// Add Product Form
 router.get('/products/add', (req, res) => {
     res.render('admin/add-product', {
         pageTitle: 'Add Product',
@@ -68,7 +63,6 @@ router.get('/products/add', (req, res) => {
     });
 });
 
-// Add Product POST
 router.post('/products', upload.single('image'), async (req, res) => {
     try {
         const product = new Product({
@@ -95,7 +89,6 @@ router.post('/products', upload.single('image'), async (req, res) => {
     }
 });
 
-// Edit Product Form
 router.get('/products/:id/edit', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -114,7 +107,6 @@ router.get('/products/:id/edit', async (req, res) => {
     }
 });
 
-// Update Product POST
 router.post('/products/:id', upload.single('image'), async (req, res) => {
     try {
         const updateData = {
@@ -127,7 +119,7 @@ router.post('/products/:id', upload.single('image'), async (req, res) => {
         };
 
         if (req.file) {
-            updateData.image = req.file.filename; // update filename if new image uploaded
+            updateData.image = req.file.filename; 
         }
 
         await Product.findByIdAndUpdate(req.params.id, updateData);
@@ -144,7 +136,6 @@ router.post('/products/:id', upload.single('image'), async (req, res) => {
     }
 });
 
-// Delete Product
 router.delete('/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
